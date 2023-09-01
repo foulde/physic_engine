@@ -135,7 +135,18 @@ class AdvancedSkyBoxVBO(BaseVBO):
 
 
 
+# class AdvancedSkyBoxVBO(BaseVBO):
+#     def __init__(self, ctx):
+#         super().__init__(ctx)
+#         self.format = '3f'
+#         self.attribs = ['in_position']
 
+#     def get_vertex_data(self):
+#         # in clip space
+#         z = 0.9999
+#         vertices = [(-100, -1, z), (50, -1, 5), (-1, 3, z)]
+#         vertex_data = np.array(vertices, dtype='f4')
+#         return vertex_data
 
 
 

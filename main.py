@@ -56,7 +56,7 @@ class GraphicsEngine:
         self.ctx.clear(color=(0.08, 0.16, 0.18))
         # render scene
         self.scene_renderer.render()
-        # swap buffers
+        # swap buffers  
         pg.display.flip()
 
     def get_time(self):
