@@ -37,10 +37,13 @@ class Scene:
         add(self.moving_cube)
 
         #cube with speed and acceleration 
-        # add(Cube(app, pos=(-5, 2, -50), tex_id=2 , velocity = glm.vec3(1,10,0), acceleration = glm.vec3(0,-9.8,0)))
-        add(Cube(app, pos=(-5, 6, -50), tex_id=2 , velocity = glm.vec3(0,2,0), acceleration = glm.vec3(0,-9.8,0)))
+        # add(Cube(app, pos=(-5, 6, -50), tex_id=2 , velocity = glm.vec3(0,2,0), acceleration = glm.vec3(0,-9.8,0)))
+        # add(Cube(app, pos=(-5, 2, -50), tex_id=2 , velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0)))
+        #cube with rotation
+        add(Cube(app, pos=(-5, 6, -50), tex_id=2 , velocity = glm.vec3(0,2,0), acceleration = glm.vec3(0,-9.8,0) , angular_velocity=(1,1,1)))
         add(Cube(app, pos=(-5, 2, -50), tex_id=2 , velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0)))
-        # add(Cube(app, pos=(-5, 2, -50), tex_id=2 , velocity = glm.vec3(1,10,0), acceleration = glm.vec3(0,-9.8,0)))
+
+
 
     def update(self):
 

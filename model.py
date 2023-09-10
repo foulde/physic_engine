@@ -91,7 +91,8 @@ class ExtendedBaseModel(BaseModel):
 
 class Cube(ExtendedBaseModel):
     def __init__(self, app, vao_name='cube', tex_id=0, pos=(0, 0, 0), rot=(0, 0, 0), scale=(1, 1, 1),
-                  velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0)):
+                  velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0), angular_velocity = glm.vec3(0,0,0)
+                  , angular_acceleration = glm.vec3(0,0,0)):
         super().__init__(app, vao_name, tex_id, pos, rot, scale)
         
         # self.velocity  = glm.vec3(5,0,0)
@@ -99,12 +100,19 @@ class Cube(ExtendedBaseModel):
 
         self.velocity  = velocity
         self.acceleration  = acceleration
+        self.angular_velocity = angular_velocity
+        self.angular_acceleration = angular_acceleration
 
 
 
     def update_physics(self, delta_time): 
         self.velocity += self.acceleration*delta_time
         self.pos += self.velocity*delta_time
+        
+        self.angular_velocity += self.angular_acceleration*delta_time
+        self.rot += self.angular_velocity*delta_time
+
+        
     
         self.m_model = self.get_model_matrix()
 
@@ -114,11 +122,56 @@ class Cube(ExtendedBaseModel):
         # print(self.shape[0])
         # print(f'position complete {self.pos}')
         # print(self.pos.x)
+        # print(self.m_model.vaos['cube'].ctx)
+        #print vbo of the cube 
+        # print(self.m_model.vaos['cube'].ctx.buffer)
+        # print(self.vao.ctx.buffer())
+        # print(print(self.app.mesh.vao.vaos['cube'].vbo))
+        # # print(self.app.mesh.vao.vbo.vbos['cube'])
+        print(f'world coordinate :\n{self.m_model}')
 
     def update(self):
         delta_time= 0.016
         self.update_physics(delta_time)
         super().update()
+
+
+
+
+
+# class Cube(ExtendedBaseModel):
+#     def __init__(self, app, vao_name='cube', tex_id=0, pos=(0, 0, 0), rot=(0, 0, 0), scale=(1, 1, 1),
+#                   velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0)):
+#         super().__init__(app, vao_name, tex_id, pos, rot, scale)
+        
+#         # self.velocity  = glm.vec3(5,0,0)
+#         # self.acceleration  = glm.vec3(0,-2.81,0)
+
+#         self.velocity  = velocity
+#         self.acceleration  = acceleration
+
+
+
+#     def update_physics(self, delta_time): 
+#         self.velocity += self.acceleration*delta_time
+#         self.pos += self.velocity*delta_time
+
+        
+    
+#         self.m_model = self.get_model_matrix()
+
+#         # print(self.pos)
+#         # print(self.scale)
+#         # print(self.scale[0])
+#         # print(self.shape[0])
+#         # print(f'position complete {self.pos}')
+#         # print(self.pos.x)
+
+#     def update(self):
+#         delta_time= 0.016
+#         self.update_physics(delta_time)
+#         super().update()
+
 
 
 
