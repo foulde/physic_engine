@@ -53,7 +53,8 @@ class Scene:
 
         a = self.objects[-1]
         b= self.objects[-2]
-        print(test_aabb_overlap(a,b))
+        # print(test_aabb_overlap(a,b))
+        test_aabb_overlap(a,b)
         # collision_detection()
         # print(f'this the time {self.app.time} \nthis is the rot { self.moving_cube.rot.xyz }\n')
 

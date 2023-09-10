@@ -15,6 +15,10 @@ class BaseModel:
         self.vao = app.mesh.vao.vaos[vao_name]
         self.program = self.vao.program
         self.camera = self.app.camera
+        
+        self.vbo = app.mesh.vao.vbo.vbos[vao_name]
+        print(f'vbo object: {self.vbo}')
+
 
         
 
@@ -43,8 +47,8 @@ class BaseModel:
 
 
 class ExtendedBaseModel(BaseModel):
-    def __init__(self, app, vao_name, tex_id, pos, rot, scale):
-        super().__init__(app, vao_name, tex_id, pos, rot, scale)
+    def __init__(self, app, vao_name, tex_id, pos, rot, scale ):
+        super().__init__(app, vao_name, tex_id, pos, rot, scale  )
         self.on_init()
 
     def update(self):
@@ -92,7 +96,7 @@ class ExtendedBaseModel(BaseModel):
 class Cube(ExtendedBaseModel):
     def __init__(self, app, vao_name='cube', tex_id=0, pos=(0, 0, 0), rot=(0, 0, 0), scale=(1, 1, 1),
                   velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0), angular_velocity = glm.vec3(0,0,0)
-                  , angular_acceleration = glm.vec3(0,0,0)):
+                  , angular_acceleration = glm.vec3(0,0,0) ):
         super().__init__(app, vao_name, tex_id, pos, rot, scale)
         
         # self.velocity  = glm.vec3(5,0,0)
@@ -102,6 +106,12 @@ class Cube(ExtendedBaseModel):
         self.acceleration  = acceleration
         self.angular_velocity = angular_velocity
         self.angular_acceleration = angular_acceleration
+        
+        print(f'vbo object: {self.vbo}')
+
+        if self.vbo:
+            vertex_data = self.vbo.get_vertex_data()
+            print(f'this is the print of the vertex_data {vertex_data}')
 
 
 
@@ -128,7 +138,9 @@ class Cube(ExtendedBaseModel):
         # print(self.vao.ctx.buffer())
         # print(print(self.app.mesh.vao.vaos['cube'].vbo))
         # # print(self.app.mesh.vao.vbo.vbos['cube'])
-        print(f'world coordinate :\n{self.m_model}')
+        # print(f'world coordinate :\n{self.m_model}')
+
+        # print(self.vertex_data)
 
     def update(self):
         delta_time= 0.016
