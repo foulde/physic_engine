@@ -110,8 +110,23 @@ class Cube(ExtendedBaseModel):
         print(f'vbo object: {self.vbo}')
 
         if self.vbo:
+            # vertex_data = self.vbo.get_vertex_data()
+            # # print(f'this is the print of the vertex_data {vertex_data}')
+            # # world_data= [vertex[-3:]*scale for vertex in vertex_data]
+            # world_data= [vertex[-3:]*2 for vertex in vertex_data]
+            # # world_data= [vertex[-3:]*scale for vertex in vertex_data]
+            # print(f'this is the print of the world_data {world_data}') 
             vertex_data = self.vbo.get_vertex_data()
-            print(f'this is the print of the vertex_data {vertex_data}')
+    
+            # Convert each vertex from vec3 to vec4
+            homogenous_vertices = [glm.vec4(vertex[-3], vertex[-2], vertex[-1], 1.0) for vertex in vertex_data]
+            
+            # Transform each vertex using the model matrix
+            world_data = [self.m_model * vertex for vertex in homogenous_vertices]
+            print(f'print transformed vertex data in world coordinate {world_data}')
+            # Convert back to vec3 if needed
+            # world_data_vec3 = [(vertex.x, vertex.y, vertex.z) for vertex in world_data]
+            
 
 
 
