@@ -120,12 +120,16 @@ class Cube(ExtendedBaseModel):
     
             # Convert each vertex from vec3 to vec4
             homogenous_vertices = [glm.vec4(vertex[-3], vertex[-2], vertex[-1], 1.0) for vertex in vertex_data]
-            
+            normal_vertice = [glm.vec4(normal[2], normal[3], normal[4], 1.0) for normal in vertex_data]
             # Transform each vertex using the model matrix
             world_data = [self.m_model * vertex for vertex in homogenous_vertices]
+
             print(f'print transformed vertex data in world coordinate {world_data}')
+            
             # Convert back to vec3 if needed
             # world_data_vec3 = [(vertex.x, vertex.y, vertex.z) for vertex in world_data]
+            print(f'print triangle index  {vertex_data}')
+
             
 
 
