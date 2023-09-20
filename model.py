@@ -17,7 +17,7 @@ class BaseModel:
         self.camera = self.app.camera
         
         self.vbo = app.mesh.vao.vbo.vbos[vao_name]
-        print(f'vbo object: {self.vbo}')
+        # print(f'vbo object: {self.vbo}')
 
 
         
@@ -96,7 +96,7 @@ class ExtendedBaseModel(BaseModel):
 class Cube(ExtendedBaseModel):
     def __init__(self, app, vao_name='cube', tex_id=0, pos=(0, 0, 0), rot=(0, 0, 0), scale=(1, 1, 1),
                   velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0), angular_velocity = glm.vec3(0,0,0)
-                  , angular_acceleration = glm.vec3(0,0,0) ):
+                  , angular_acceleration = glm.vec3(0,0,0) , enable_extract_triangle = False ):
         super().__init__(app, vao_name, tex_id, pos, rot, scale)
         
         # self.velocity  = glm.vec3(5,0,0)
@@ -106,32 +106,60 @@ class Cube(ExtendedBaseModel):
         self.acceleration  = acceleration
         self.angular_velocity = angular_velocity
         self.angular_acceleration = angular_acceleration
+
+        self.enable_extract_triangle = enable_extract_triangle
+        self.triangles = self._extract_triangles()
         
-        print(f'vbo object: {self.vbo}')
+        # print(f'vbo object: {self.vbo}')
 
-        if self.vbo:
-            # vertex_data = self.vbo.get_vertex_data()
-            # # print(f'this is the print of the vertex_data {vertex_data}')
-            # # world_data= [vertex[-3:]*scale for vertex in vertex_data]
-            # world_data= [vertex[-3:]*2 for vertex in vertex_data]
-            # # world_data= [vertex[-3:]*scale for vertex in vertex_data]
-            # print(f'this is the print of the world_data {world_data}') 
-            vertex_data = self.vbo.get_vertex_data()
+        # if self.vbo:
+        #     # vertex_data = self.vbo.get_vertex_data()
+        #     # # print(f'this is the print of the vertex_data {vertex_data}')
+        #     # # world_data= [vertex[-3:]*scale for vertex in vertex_data]
+        #     # world_data= [vertex[-3:]*2 for vertex in vertex_data]
+        #     # # world_data= [vertex[-3:]*scale for vertex in vertex_data]
+        #     # print(f'this is the print of the world_data {world_data}') 
+        #     vertex_data = self.vbo.get_vertex_data()
     
-            # Convert each vertex from vec3 to vec4
-            homogenous_vertices = [glm.vec4(vertex[-3], vertex[-2], vertex[-1], 1.0) for vertex in vertex_data]
-            normal_vertice = [glm.vec4(normal[2], normal[3], normal[4], 1.0) for normal in vertex_data]
-            # Transform each vertex using the model matrix
-            world_data = [self.m_model * vertex for vertex in homogenous_vertices]
-
-            print(f'print transformed vertex data in world coordinate {world_data}')
-            
-            # Convert back to vec3 if needed
-            # world_data_vec3 = [(vertex.x, vertex.y, vertex.z) for vertex in world_data]
-            print(f'print triangle index  {vertex_data}')
+        #     # Convert each vertex from vec3 to vec4
+        #     homogenous_vertices = [glm.vec4(vertex[-3], vertex[-2], vertex[-1], 1.0) for vertex in vertex_data]
+        #     normal_vertice = [glm.vec4(normal[2], normal[3], normal[4], 1.0) for normal in vertex_data]
+        #     # Transform each vertex using the model matrix
+        #     world_data = [self.m_model * vertex for vertex in homogenous_vertices]
+        #     world_data_vec3 = [(vertex.x, vertex.y, vertex.z) for vertex in world_data]
 
             
 
+            
+
+    def _extract_triangles(self):
+        triangles = []
+
+        if not self.vbo :
+            return triangles
+        if not self.enable_extract_triangle:
+            return None
+        vertex_data = self.vbo.get_vertex_data()
+        # Convert each vertex from vec3 to vec4
+        homogenous_vertices = [glm.vec4(vertex[-3], vertex[-2], vertex[-1], 1.0) for vertex in vertex_data]
+        # Transform each vertex using the model matrix
+        world_data = [self.m_model * vertex for vertex in homogenous_vertices]
+        # Convert back to vec3
+        world_data_vec3 = [(vertex.x, vertex.y, vertex.z) for vertex in world_data]
+
+        # Extract triangles using indices 
+        # Assuming vertex_data has vertices in the format: triangle1_vertex1, triangle1_vertex2, triangle1_vertex3, ...
+        for i in range(0, len(world_data_vec3), 3):
+            triangle = [world_data_vec3[i], world_data_vec3[i+1], world_data_vec3[i+2]]
+            triangles.append(triangle)
+
+
+        # print(f'print transformed vertex data in world coordinate {world_data}')
+        # print(f'print triangle index  {vertex_data}')
+        # print(f'print triangle index  {triangles}')
+            
+        return triangles
+    
 
 
     def update_physics(self, delta_time): 
@@ -140,6 +168,7 @@ class Cube(ExtendedBaseModel):
         
         self.angular_velocity += self.angular_acceleration*delta_time
         self.rot += self.angular_velocity*delta_time
+        self.triangles = self._extract_triangles()
 
         
     

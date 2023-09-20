@@ -40,8 +40,8 @@ class Scene:
         # add(Cube(app, pos=(-5, 6, -50), tex_id=2 , velocity = glm.vec3(0,2,0), acceleration = glm.vec3(0,-9.8,0)))
         # add(Cube(app, pos=(-5, 2, -50), tex_id=2 , velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0)))
         #cube with rotation
-        add(Cube(app, pos=(-5, 6, -50), tex_id=2 , velocity = glm.vec3(0,2,0), acceleration = glm.vec3(0,-9.8,0) , angular_velocity=(1,1,1)))
-        add(Cube(app, pos=(-5, 2, -50), tex_id=2 , velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0)))
+        add(Cube(app, pos=(-5, 6, -50), tex_id=2 , velocity = glm.vec3(0,2,0), acceleration = glm.vec3(0,-9.8,0) , angular_velocity=(1,1,1),enable_extract_triangle=True))
+        add(Cube(app, pos=(-5, 2, -50), tex_id=2 , velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0),enable_extract_triangle=True))
 
 
 
@@ -55,6 +55,10 @@ class Scene:
         b= self.objects[-2]
         # print(test_aabb_overlap(a,b))
         test_aabb_overlap(a,b)
+
+      
+        # test_aabb_overlap(cube1,cube2)
+        
         # collision_detection()
         # print(f'this the time {self.app.time} \nthis is the rot { self.moving_cube.rot.xyz }\n')
 
