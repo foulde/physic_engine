@@ -93,14 +93,14 @@ def broad_phase_collision(a , b ):
 
 
 
-def broad_phase_collision2(a , b  ):
+# def broad_phase_collision2(a , b  ):
     
-    distance = glm.distance(a.position , b.position)
-    if a.radius + b.radius > distance :
+#     distance = glm.distance(a.position , b.position)
+#     if a.radius + b.radius > distance :
 
-        return True
+#         return True
     
-    return False
+#     return False
 
 
 #region triafgle triangle intersection

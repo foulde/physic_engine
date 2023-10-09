@@ -154,7 +154,7 @@ class Cube():
 
 
 
-
+print(glm.mat3(1/6))
 
 
 
