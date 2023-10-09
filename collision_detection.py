@@ -83,10 +83,24 @@ def test_aabb_overlap( a , b):
 
 
 
+def broad_phase_collision(a , b ):
+
+    distance = glm.distance(a.position , b.position)
+    if distance < 4:
+        return True
+    
+    return False
 
 
 
+def broad_phase_collision2(a , b  ):
+    
+    distance = glm.distance(a.position , b.position)
+    if a.radius + b.radius > distance :
 
+        return True
+    
+    return False
 
 
 #region triafgle triangle intersection
@@ -136,7 +150,11 @@ def triangle_triangle_intersection(t1, t2):
 # Example usage:
 triangle1 = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]])
 triangle2 = np.array([[0.5, 0.5, 0], [1.5, 0.5, 0], [0.5, 1.5, 0]])
-print(triangle_triangle_intersection(triangle1, triangle2))  # This should print True since the triangles intersect
+
+triangle3 = np.array([[0, 0, 0], [1, 0, 0], [0, 0, 1]])
+triangle4 = np.array([[0, 0.5, 0], [1, 0.5, 0], [0, 0.5, 1]])
+# print(triangle_triangle_intersection(triangle1, triangle2))  # This should print True since the triangles intersect
+print(triangle_triangle_intersection(triangle3, triangle4))  # This should print True since the triangles intersect
 
 #endregion 
 

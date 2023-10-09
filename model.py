@@ -15,7 +15,7 @@ class BaseModel:
         self.vao = app.mesh.vao.vaos[vao_name]
         self.program = self.vao.program
         self.camera = self.app.camera
-        
+        # self.mass = 1
         self.vbo = app.mesh.vao.vbo.vbos[vao_name]
         # print(f'vbo object: {self.vbo}')
 
@@ -96,11 +96,13 @@ class ExtendedBaseModel(BaseModel):
 class Cube(ExtendedBaseModel):
     def __init__(self, app, vao_name='cube', tex_id=0, pos=(0, 0, 0), rot=(0, 0, 0), scale=(1, 1, 1),
                   velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0), angular_velocity = glm.vec3(0,0,0)
-                  , angular_acceleration = glm.vec3(0,0,0) , enable_extract_triangle = False ):
+                  , angular_acceleration = glm.vec3(0,0,0) , enable_extract_triangle = False , mass = 1 ,inertia_tensor = glm.mat3(1) ):
         super().__init__(app, vao_name, tex_id, pos, rot, scale)
         
         # self.velocity  = glm.vec3(5,0,0)
         # self.acceleration  = glm.vec3(0,-2.81,0)
+        self.mass = mass
+
 
         self.velocity  = velocity
         self.acceleration  = acceleration
