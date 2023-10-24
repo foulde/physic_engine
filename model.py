@@ -1,11 +1,30 @@
 import moderngl as mgl
 import numpy as np
 import glm
+from math import cos, sin
 
 def skew_matrix(v):
     return glm.mat3(0, -v.z, v.y,
                     v.z, 0, -v.x,
                     -v.y, v.x, 0)
+
+
+
+def euler_to_mat3(x, y, z):
+    Rx = glm.mat3(1, 0, 0,
+                  0, cos(x), -sin(x),
+                  0, sin(x), cos(x))
+    
+    Ry = glm.mat3(cos(y), 0, sin(y),
+                  0, 1, 0,
+                  -sin(y), 0, cos(y))
+
+    Rz = glm.mat3(cos(z), -sin(z), 0,
+                  sin(z), cos(z), 0,
+                  0, 0, 1)
+    
+    return Rz * Ry * Rx
+
 
 class BaseModel:
     def __init__(self, app, vao_name, tex_id, pos=(0, 0, 0), rot=(0, 0, 0), scale=(1, 1, 1)):
@@ -13,6 +32,8 @@ class BaseModel:
         self.pos = pos
         self.vao_name = vao_name
         self.rot = glm.vec3([glm.radians(a) for a in rot])
+        # self.rot_matrix = glm.mat3(glm.eulerAngleXYZ(self.rot.x, self.rot.y, self.rot.z))
+        self.rot_matrix = euler_to_mat3(self.rot.x, self.rot.y, self.rot.z)
         self.scale = scale
         self.m_model = self.get_model_matrix()
         self.tex_id = tex_id
@@ -28,20 +49,27 @@ class BaseModel:
 
     def update(self): ...
 
+    # def get_model_matrix(self):
+    #     m_model = glm.mat4()
+    #     # translate
+    #     m_model = glm.translate(m_model, self.pos)
+    #     # rotate
+
+    #     m_model = glm.rotate(m_model, self.rot.z, glm.vec3(0, 0, 1))
+    #     m_model = glm.rotate(m_model, self.rot.y, glm.vec3(0, 1, 0))
+    #     m_model = glm.rotate(m_model, self.rot.x, glm.vec3(1, 0, 0))
+
+    #     # m_model = glm.rotate(m_model, self.rot.z, glm.vec3(0, 0, 1))
+    #     # m_model = glm.rotate(m_model, self.rot.y, glm.vec3(0, 1, 0))
+    #     # m_model = glm.rotate(m_model, self.rot.x, glm.vec3(1, 0, 0))
+    #     # scale
+    #     m_model = glm.scale(m_model, self.scale)
+    #     return m_model
+
     def get_model_matrix(self):
         m_model = glm.mat4()
-        # translate
         m_model = glm.translate(m_model, self.pos)
-        # rotate
-
-        m_model = glm.rotate(m_model, self.rot.z, glm.vec3(0, 0, 1))
-        m_model = glm.rotate(m_model, self.rot.y, glm.vec3(0, 1, 0))
-        m_model = glm.rotate(m_model, self.rot.x, glm.vec3(1, 0, 0))
-
-        # m_model = glm.rotate(m_model, self.rot.z, glm.vec3(0, 0, 1))
-        # m_model = glm.rotate(m_model, self.rot.y, glm.vec3(0, 1, 0))
-        # m_model = glm.rotate(m_model, self.rot.x, glm.vec3(1, 0, 0))
-        # scale
+        m_model *= glm.mat4(self.rot_matrix)  # Use rotation matrix instead of Euler angles
         m_model = glm.scale(m_model, self.scale)
         return m_model
 
@@ -98,7 +126,7 @@ class ExtendedBaseModel(BaseModel):
 
 
 class Cube(ExtendedBaseModel):
-    def __init__(self, app, vao_name='cube', tex_id=0, pos=(0, 0, 0), rot=(0, 0, 0), rot_matrix = glm.mat3(1), scale=(1, 1, 1),
+    def __init__(self, app, vao_name='cube', tex_id=0, pos=(0, 0, 0), rot=(0, 0, 0), scale=(1, 1, 1),
                   velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0), angular_velocity = glm.vec3(0,0,0)
                   , angular_acceleration = glm.vec3(0,0,0) , enable_extract_triangle = False , mass = 1 ,inertia_tensor = glm.mat3(1) ):
         super().__init__(app, vao_name, tex_id, pos, rot, scale)
@@ -106,7 +134,11 @@ class Cube(ExtendedBaseModel):
         # self.velocity  = glm.vec3(5,0,0)
         # self.gravity  = glm.vec3(0,-2.81,0)
         self.mass = mass
-        self.rot_matrix = rot_matrix
+        # self.rot_matrix = rot_matrix
+        # self.rot_matrix = glm.mat3(glm.eulerAngleXYZ(self.rot.x, self.rot.y, self.rot.z))
+        # self.rot_matrix = euler_to_mat3(self.rot.x, self.rot.y, self.rot.z)
+        self.rot_matrix = self.rot_matrix
+
         self.natural_inertia_tensor = inertia_tensor
         self.velocity  = velocity
         self.acceleration  = acceleration
@@ -154,7 +186,7 @@ class Cube(ExtendedBaseModel):
         self.velocity += self.acceleration*delta_time + effective_force/self.mass*delta_time
         self.pos += self.velocity*delta_time
 
-        self.inertia_tensor = self.rot * self.natural_inertia_tensor * glm.transpose(self.rot)
+        self.inertia_tensor = self.rot_matrix * self.natural_inertia_tensor * glm.transpose(self.rot_matrix)
         self.angular_acceleration = glm.inverse(self.inertia_tensor) * effective_torque
         self.angular_velocity += self.angular_acceleration*delta_time
 ##
