@@ -24,11 +24,12 @@ class Scene:
             for z in range(-n, n, s):
                 add(Cube(app, pos=(x, -s, z)))
 
-        # columns
-        for i in range(5):
-            add(Cube(app, pos=(15, i * s, -9 + i), tex_id=2))
-            add(Cube(app, pos=(15, i * s, 5 - i), tex_id=2))
+        # # columns
+        # for i in range(5):
+        #     add(Cube(app, pos=(15, i * s, -9 + i), tex_id=2))
+        #     add(Cube(app, pos=(15, i * s, 5 - i), tex_id=2))
 
+        add(Cube(app, pos=(0,0,0), scale=(10,3,10),tex_id=2))
         # cat
         # add(Cat(app, pos=(0, -1, -10)))
 
