@@ -41,7 +41,7 @@ class Scene:
         # add(Cube(app, pos=(-5, 6, -50), tex_id=2 , velocity = glm.vec3(0,2,0), acceleration = glm.vec3(0,-9.8,0)))
         # add(Cube(app, pos=(-5, 2, -50), tex_id=2 , velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0)))
         #cube with rotation
-        add(Cube(app, pos=(-5, 6, -20), tex_id=2 , velocity = glm.vec3(0,2,0),rot=(5, 2, 7), acceleration = glm.vec3(0,-2.8,0) , angular_velocity=(1,1,1),enable_extract_triangle=True))
+        add(Cube(app, pos=(-5, 300, -20), tex_id=2 , velocity = glm.vec3(0,2,0),rot=(5, 2, 7), acceleration = glm.vec3(0,-2.8,0) , angular_velocity=(1,1,1),enable_extract_triangle=True))
         add(Cube(app, pos=(-5, 2, -20), tex_id=2 , velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0),enable_extract_triangle=True))
 
         # add(Cube(app, pos=(-5, 6, -50), tex_id=2 , velocity = glm.vec3(0,2,0),rot=glm.mat3(), acceleration = glm.vec3(0,-2.8,0) , angular_velocity=(1,1,1),enable_extract_triangle=True))

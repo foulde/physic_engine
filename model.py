@@ -26,6 +26,43 @@ def euler_to_mat3(x, y, z):
     return Rz * Ry * Rx
 
 
+
+# def orthonormalize(mat):
+#     x = glm.normalize(mat[0])
+#     y = glm.normalize(mat[1])
+#     z = glm.normalize(mat[2])
+#     return glm.mat3(x, y, z)
+
+
+
+
+
+def orthonormalize(mat):
+    # Assume input is a 3x3 matrix
+    x = mat[0]
+    y = mat[1]
+    z = mat[2]
+
+    # Gram-Schmidt process
+    x = glm.normalize(x)
+    y -= x * glm.dot(x, y)
+    y = glm.normalize(y)
+    z = glm.cross(x, y)  # No need to subtract projections, as x and y are already orthogonal
+
+    return glm.mat3(x, y, z)
+
+# ... Inside your update_physics function ...
+
+
+
+
+
+
+
+
+
+
+
 class BaseModel:
     def __init__(self, app, vao_name, tex_id, pos=(0, 0, 0), rot=(0, 0, 0), scale=(1, 1, 1)):
         self.app = app
@@ -49,6 +86,28 @@ class BaseModel:
 
     def update(self): ...
 
+    
+
+    def get_model_matrix(self):
+        m_model = glm.mat4()
+        m_model = glm.translate(m_model, self.pos)
+        m_model *= glm.mat4(self.rot_matrix)  # Use rotation matrix instead of Euler angles
+        m_model = glm.scale(m_model, self.scale)
+        return m_model
+
+    def render(self):
+        self.update()
+        self.vao.render()   
+
+
+
+    # def get_model_matrix(self):
+    #     m_model = glm.mat4()
+    #     m_model = glm.translate(m_model, self.pos)
+    #     m_model = glm.mat4(self.rot_matrix)  # Use rotation matrix instead of Euler angles
+    #     m_model = glm.scale(m_model, self.scale)
+    #     return m_model
+
     # def get_model_matrix(self):
     #     m_model = glm.mat4()
     #     # translate
@@ -66,16 +125,7 @@ class BaseModel:
     #     m_model = glm.scale(m_model, self.scale)
     #     return m_model
 
-    def get_model_matrix(self):
-        m_model = glm.mat4()
-        m_model = glm.translate(m_model, self.pos)
-        m_model *= glm.mat4(self.rot_matrix)  # Use rotation matrix instead of Euler angles
-        m_model = glm.scale(m_model, self.scale)
-        return m_model
 
-    def render(self):
-        self.update()
-        self.vao.render()
 
 
 class ExtendedBaseModel(BaseModel):
@@ -192,7 +242,9 @@ class Cube(ExtendedBaseModel):
 ##
         omega_skew = skew_matrix(self.angular_velocity)
         delta_rot = glm.mat3(1) + omega_skew * delta_time
-        self.rot = delta_rot * self.rot
+        # self.rot = delta_rot * self.rot
+        self.rot_matrix = delta_rot * self.rot_matrix
+        self.rot_matrix = orthonormalize(self.rot_matrix)  # Normalization step
 
 ##
         # self.rot += self.angular_velocity*delta_time
