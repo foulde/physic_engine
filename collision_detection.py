@@ -144,15 +144,24 @@ def triangle_triangle_intersection(t1, t2):
     t1_interval = (min(t1_proj), max(t1_proj))
     t2_interval = (min(t2_proj), max(t2_proj))
 
-    # 6. Check if the intervals overlap
-    return not (t1_interval[1] < t2_interval[0] or t1_interval[0] > t2_interval[1])
+    if not (t1_interval[1] < t2_interval[0] or t1_interval[0] > t2_interval[1]):
+            
+            # Collision occurred, return the intervals
+            return (True, t1_proj, t2_proj)
+            # return (True, t1_interval, t2_interval)
+    else:
+            # No collision, return False and None for vectors
+            return (False, 0, 0)
+
+    # return not (t1_interval[1] < t2_interval[0] or t1_interval[0] > t2_interval[1]) , t1_interval , t2_interval
+
 
 # Example usage:
 triangle1 = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]])
 triangle2 = np.array([[0.5, 0.5, 0], [1.5, 0.5, 0], [0.5, 1.5, 0]])
 
-triangle3 = np.array([[0, 0, 0], [1, 0, 0], [0, 0, 1]])
-triangle4 = np.array([[0, 0.5, 0], [1, 0.5, 0], [0, 0.5, 1]])
+triangle3 = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+triangle4 = np.array([[0, 0, 0], [1, 0, 1], [1, 1, 1]])
 # print(triangle_triangle_intersection(triangle1, triangle2))  # This should print True since the triangles intersect
 print(triangle_triangle_intersection(triangle3, triangle4))  # This should print True since the triangles intersect
 
@@ -165,3 +174,55 @@ print(triangle_triangle_intersection(triangle3, triangle4))  # This should print
 #             if triangle_triangle_intersection(triangle1, triangle2):
 #                 return True
 #     return False
+
+
+
+
+
+
+
+
+
+# # # def compute_plane(triangle):
+# # #     # Given triangle with points a, b, c
+# # #     a, b, c = triangle
+# # #     normal = np.cross(b - a, c - a)
+# # #     d = -np.dot(normal, a)
+# # #     return normal, d
+
+# # # def side_of_plane(plane, point):
+# # #     normal, d = plane
+# # #     return np.sign(np.dot(normal, point) + d)
+
+# # # def triangle_triangle_intersection(t1, t2):
+# # #     # 1. Compute the plane equation of triangle 1
+# # #     plane1 = compute_plane(t1)
+# # #     # Check if all vertices of triangle 2 are on the same side of plane 1
+# # #     if all(side_of_plane(plane1, v) > 0 for v in t2) or \
+# # #        all(side_of_plane(plane1, v) < 0 for v in t2):
+# # #         return False
+    
+# # #     # 2. Compute the plane equation of triangle 2
+# # #     plane2 = compute_plane(t2)
+# # #     # Check if all vertices of triangle 1 are on the same side of plane 2
+# # #     if all(side_of_plane(plane2, v) > 0 for v in t1) or \
+# # #        all(side_of_plane(plane2, v) < 0 for v in t1):
+# # #         return False
+
+# # #     # 3. Compute the line L of intersection between the two planes.
+# # #     # Skipping this step in this code since we use it indirectly in the next steps
+
+# # #     # 4. Determine which principal coordinate axis is most parallel with the line L
+# # #     line_direction = np.cross(plane1[0], plane2[0])  # This is the direction of the line of intersection
+# # #     axis = np.argmax(np.abs(line_direction))
+
+# # #     # 5. Project the triangles onto the principal axis and compute scalar intervals
+# # #     t1_proj = [v[axis] for v in t1]
+# # #     t2_proj = [v[axis] for v in t2]
+# # #     t1_interval = (min(t1_proj), max(t1_proj))
+# # #     t2_interval = (min(t2_proj), max(t2_proj))
+    
+# # #     # 6. Check if the intervals overlap
+# # #     return not (t1_interval[1] < t2_interval[0] or t1_interval[0] > t2_interval[1]), t1_interval, t2_interval
+
+# # #     # return not (t1_interval[1] < t2_interval[0] or t1_interval[0] > t2_interval[1]) , t1_interval , t2_interval

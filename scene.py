@@ -1,6 +1,7 @@
 from model import *
 import glm
-from collision_detection import *
+# from collision_detection import *
+from collision_intersection import *
 
 
 class Scene:
@@ -41,7 +42,7 @@ class Scene:
         # add(Cube(app, pos=(-5, 6, -50), tex_id=2 , velocity = glm.vec3(0,2,0), acceleration = glm.vec3(0,-9.8,0)))
         # add(Cube(app, pos=(-5, 2, -50), tex_id=2 , velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0)))
         #cube with rotation
-        add(Cube(app, pos=(-5, 300, -20), tex_id=2 , velocity = glm.vec3(0,2,0),rot=(5, 2, 7), acceleration = glm.vec3(0,-2.8,0) , angular_velocity=(1,1,1),enable_extract_triangle=True))
+        add(Cube(app, pos=(-5, 8, -20), tex_id=2 , velocity = glm.vec3(0,2,0),rot=(5, 2, 7), acceleration = glm.vec3(0,-2.8,0) , angular_velocity=(1,1,1),enable_extract_triangle=True))
         add(Cube(app, pos=(-5, 2, -20), tex_id=2 , velocity = glm.vec3(0,0,0), acceleration = glm.vec3(0,0,0),enable_extract_triangle=True))
 
         # add(Cube(app, pos=(-5, 6, -50), tex_id=2 , velocity = glm.vec3(0,2,0),rot=glm.mat3(), acceleration = glm.vec3(0,-2.8,0) , angular_velocity=(1,1,1),enable_extract_triangle=True))
@@ -58,12 +59,29 @@ class Scene:
         a = self.objects[-1]
         b= self.objects[-2]
         # print(test_aabb_overlap(a,b))
-        test_aabb_overlap(a,b)
+        # test_aabb_overlap(a,b)
 
         for t1 in a.triangles:
             for t2 in b.triangles:
-                print(triangle_triangle_intersection(np.array(t1), np.array(t2)))
-                if triangle_triangle_intersection(np.array(t1), np.array(t2)): 
+                result = triangle_triangle_intersection(np.array(t1), np.array(t2))
+
+                if isinstance(result, bool):
+                    res = result
+                    vec1, vec2 = None, None  # Set vectors to None or some default values
+                else:
+                                            # result[0] is a boolean, unpack the rest of the tuple
+                    res, vec1, vec2 = result
+
+
+
+
+
+                # print(triangle_triangle_intersection(np.array(t1), np.array(t2)))
+                # result = triangle_triangle_intersection(np.array(t1), np.array(t2))
+                # res ,vec1 ,vec2 = result
+                print(f'this is the res {res} \nthis is the vec1 {vec1} \nthis is the vec2 {vec2}')
+                # if triangle_triangle_intersection(np.array(t1), np.array(t2))[0]: 
+                if res: 
                     print("collision detected between triangles")
                     
                     a.velocity = glm.vec3(0,0,0)

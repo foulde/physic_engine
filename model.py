@@ -229,34 +229,56 @@ class Cube(ExtendedBaseModel):
     
 
 
-    def update_physics(self, delta_time, force=None , torque=None):
-        effective_force = glm.vec3(0,0,0) if force is None else force 
-        effective_torque = glm.vec3(0,0,0) if torque is None else torque
+#     def update_physics(self, delta_time, force=None , torque=None):
+#         effective_force = glm.vec3(0,0,0) if force is None else force 
+#         effective_torque = glm.vec3(0,0,0) if torque is None else torque
 
-        self.velocity += self.acceleration*delta_time + effective_force/self.mass*delta_time
+#         self.velocity += self.acceleration*delta_time + effective_force/self.mass*delta_time
+#         self.pos += self.velocity*delta_time
+
+#         self.inertia_tensor = self.rot_matrix * self.natural_inertia_tensor * glm.transpose(self.rot_matrix)
+#         self.angular_acceleration = glm.inverse(self.inertia_tensor) * effective_torque
+#         self.angular_velocity += self.angular_acceleration*delta_time
+# ##
+#         omega_skew = skew_matrix(self.angular_velocity)
+#         delta_rot = glm.mat3(1) + omega_skew * delta_time
+#         # self.rot = delta_rot * self.rot
+#         self.rot_matrix = delta_rot * self.rot_matrix
+#         self.rot_matrix = orthonormalize(self.rot_matrix)  # Normalization step
+# ##
+#         # self.rot += self.angular_velocity*delta_time
+#         self.triangles = self._extract_triangles()
+#         self.m_model = self.get_model_matrix()
+
+
+
+    def update_physics(self, delta_time, impulse=None , torque=None , r_impact =None):
+        impulse = glm.vec3(0,0,0) if impulse is None else impulse 
+        effective_torque = glm.vec3(0,0,0) if torque is None else torque
+        r_impact = glm.vec3(0,0,0) if r_impact is None else r_impact
+
+        self.velocity += self.acceleration*delta_time + impulse/self.mass
         self.pos += self.velocity*delta_time
 
         self.inertia_tensor = self.rot_matrix * self.natural_inertia_tensor * glm.transpose(self.rot_matrix)
-        self.angular_acceleration = glm.inverse(self.inertia_tensor) * effective_torque
-        self.angular_velocity += self.angular_acceleration*delta_time
+        # self.angular_acceleration = glm.inverse(self.inertia_tensor) * effective_torque
+        # self.angular_acceleration = glm.inverse(self.inertia_tensor) * effective_torque
+        self.angular_velocity += self.angular_acceleration*delta_time  + glm.inverse(self.inertia_tensor) *glm.cross(r_impact,impulse)
 ##
         omega_skew = skew_matrix(self.angular_velocity)
         delta_rot = glm.mat3(1) + omega_skew * delta_time
         # self.rot = delta_rot * self.rot
         self.rot_matrix = delta_rot * self.rot_matrix
         self.rot_matrix = orthonormalize(self.rot_matrix)  # Normalization step
-
 ##
         # self.rot += self.angular_velocity*delta_time
         self.triangles = self._extract_triangles()
-
-        
-    
         self.m_model = self.get_model_matrix()
 
 
     def update(self):
         delta_time= 0.016
+        # delta_time= 0.0005
         self.update_physics(delta_time)
         super().update()
 
