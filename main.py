@@ -2,6 +2,7 @@ import pygame as pg
 import moderngl as mgl
 import sys
 from model import *
+# from model_backup import *
 from camera import Camera
 from light import Light
 from mesh import Mesh

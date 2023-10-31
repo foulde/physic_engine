@@ -154,7 +154,7 @@ class Cube():
 
 
 
-print(glm.mat3(1/6))
+# print(glm.mat3(1/6))
 
 
 
@@ -185,4 +185,26 @@ print(glm.mat3(1/6))
 # Cube1 = Cube(1,2,3)
 
 
-cube1 =Cube(pos=(-5, 2, -50), tex_id=2 , velocity = glm.vec3(1,10,0), acceleration = glm.vec3(0,-9.8,0))
+# cube1 =Cube(pos=(-5, 2, -50), tex_id=2 , velocity = glm.vec3(1,10,0), acceleration = glm.vec3(0,-9.8,0))
+
+
+
+# create 3*3 matrix and assign it a value
+# mat3 = glm.mat3(1)
+#generate a 3*3 matrix with random value integer between 0 and 10
+mat3 = glm.mat3([[1.0,1.0,1.0] ,[2.0,2.0,2.0] ,[3.0,3.0,3.0]])
+# create 3 vector and assign them a value
+vec3 = glm.vec3(1.0, 2.0, 3.0)
+vec4 = glm.dvec3(1,2,3)
+#multiply the matrix by the vector and store the result in a variable
+# vec1 = mat3*vec3
+# vec1 = vec3*mat3
+# print the result
+vec2 = glm.mul(mat3, vec3)
+# vec5 = glm.mat3_mul_vector(mat3 , vec4)
+vec5 = mat3 * vec4
+# vec5 = glm.mul(vec4, mat3)
+# print(vec1)
+print(vec2)
+print(f'vec5 = {vec5}')
+

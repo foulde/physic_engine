@@ -3,52 +3,27 @@ import numpy as np
 import glm
 from math import cos, sin
 
-# def skew_matrix(v):
-#     return glm.mat3(0, -v.z, v.y,
-#                     v.z, 0, -v.x,
-#                     -v.y, v.x, 0)
+def skew_matrix(v):
+    return glm.mat3(0, -v.z, v.y,
+                    v.z, 0, -v.x,
+                    -v.y, v.x, 0)
 
 
 
-# def euler_to_mat3(x, y, z):
-#     Rx = glm.mat3(1, 0, 0,
-#                   0, cos(x), -sin(x),
-#                   0, sin(x), cos(x))
+def euler_to_mat3(x, y, z):
+    Rx = glm.mat3(1, 0, 0,
+                  0, cos(x), -sin(x),
+                  0, sin(x), cos(x))
     
-#     Ry = glm.mat3(cos(y), 0, sin(y),
-#                   0, 1, 0,
-#                   -sin(y), 0, cos(y))
+    Ry = glm.mat3(cos(y), 0, sin(y),
+                  0, 1, 0,
+                  -sin(y), 0, cos(y))
 
-#     Rz = glm.mat3(cos(z), -sin(z), 0,
-#                   sin(z), cos(z), 0,
-#                   0, 0, 1)
+    Rz = glm.mat3(cos(z), -sin(z), 0,
+                  sin(z), cos(z), 0,
+                  0, 0, 1)
     
-#     return Rz * Ry * Rx
-
-
-
-
-# def mat3_to_rot_vec(R):
-#     # Calculate rotation angle
-#     theta = np.arccos((R[0][0] + R[1][1] + R[2][2] - 1) / 2)
-
-#     # If angle is very close to 0 or pi (180 degrees), we need special handling
-#     if np.isclose(theta, 0):
-#         return glm.vec3(0, 0, 0)
-#     elif np.isclose(theta, np.pi):
-#         # It's an edge case where multiple rotation vectors are possible
-#         # We'll pick one of them
-#         x = np.sqrt((R[0][0] + 1) / 2)
-#         y = np.sqrt((R[1][1] + 1) / 2)
-#         z = np.sqrt((R[2][2] + 1) / 2)
-#         return glm.vec3(theta * x, theta * y, theta * z)
-
-#     # Calculate rotation axis for general case
-#     rx = (R[2][1] - R[1][2]) / (2 * np.sin(theta))
-#     ry = (R[0][2] - R[2][0]) / (2 * np.sin(theta))
-#     rz = (R[1][0] - R[0][1]) / (2 * np.sin(theta))
-    
-#     return glm.vec3(theta * rx, theta * ry, theta * rz)
+    return Rz * Ry * Rx
 
 
 
@@ -95,8 +70,7 @@ class BaseModel:
         self.vao_name = vao_name
         self.rot = glm.vec3([glm.radians(a) for a in rot])
         # self.rot_matrix = glm.mat3(glm.eulerAngleXYZ(self.rot.x, self.rot.y, self.rot.z))
-        self.rot_matrix = self.euler_to_mat3()
-        # self.rot_matrix = self.euler_to_mat3(self.rot.x, self.rot.y, self.rot.z)
+        self.rot_matrix = euler_to_mat3(self.rot.x, self.rot.y, self.rot.z)
         self.scale = scale
         self.m_model = self.get_model_matrix()
         self.tex_id = tex_id
@@ -106,25 +80,7 @@ class BaseModel:
         # self.mass = 1
         self.vbo = app.mesh.vao.vbo.vbos[vao_name]
         # print(f'vbo object: {self.vbo}')
-    
 
-    def euler_to_mat3(self):
-        x = self.rot.x
-        y = self.rot.y
-        z = self.rot.z
-        Rx = glm.mat3(1, 0, 0,
-                    0, cos(x), -sin(x),
-                    0, sin(x), cos(x))
-        
-        Ry = glm.mat3(cos(y), 0, sin(y),
-                    0, 1, 0,
-                    -sin(y), 0, cos(y))
-
-        Rz = glm.mat3(cos(z), -sin(z), 0,
-                    sin(z), cos(z), 0,
-                    0, 0, 1)
-        
-        return Rz * Ry * Rx
 
         
 
@@ -133,45 +89,32 @@ class BaseModel:
     
 
     # def get_model_matrix(self):
-    #     self.m_model = glm.mat4()
-    #     self.m_model = glm.translate(self.m_model, self.pos)
-    #     self.m_model *= glm.mat4(self.rot_matrix)  # Use rotation matrix instead of Euler angles
-    #     self.m_model = glm.scale(self.m_model, self.scale)
-    #     # return m_model
+    #     m_model = glm.mat4()
+    #     m_model = glm.translate(m_model, self.pos)
+    #     m_model *= glm.mat4(self.rot_matrix)  # Use rotation matrix instead of Euler angles
+    #     m_model = glm.scale(m_model, self.scale)
+    #     return m_model
     
 
 
     def get_model_matrix(self):
         m_model = glm.mat4()
+        # translate
         m_model = glm.translate(m_model, self.pos)
-        m_model *= glm.mat4(self.rot_matrix)  # Use rotation matrix instead of Euler angles
+        # rotate
+
+        m_model = glm.rotate(m_model, self.rot.z, glm.vec3(0, 0, 1))
+        m_model = glm.rotate(m_model, self.rot.y, glm.vec3(0, 1, 0))
+        m_model = glm.rotate(m_model, self.rot.x, glm.vec3(1, 0, 0))
+        # print(f'this is the rot of {self.} :\n{self.rot}')
+        # print(self.rot)
+
+        # m_model = glm.rotate(m_model, self.rot.z, glm.vec3(0, 0, 1))
+        # m_model = glm.rotate(m_model, self.rot.y, glm.vec3(0, 1, 0))
+        # m_model = glm.rotate(m_model, self.rot.x, glm.vec3(1, 0, 0))
+        # scale
         m_model = glm.scale(m_model, self.scale)
         return m_model
-    
-
-
-    # def get_model_matrix(self):
-    #     m_model = glm.mat4()
-    #     # translate
-    #     m_model = glm.translate(m_model, self.pos)
-    #     # rotate
-
-    #     m_model = glm.rotate(m_model, self.rot.z, glm.vec3(0, 0, 1))
-    #     m_model = glm.rotate(m_model, self.rot.y, glm.vec3(0, 1, 0))
-    #     m_model = glm.rotate(m_model, self.rot.x, glm.vec3(1, 0, 0))
-    #     # print(f'this is the rot of {self.} :\n{self.rot}')
-    #     # print(self.rot)
-
-    #     # m_model = glm.rotate(m_model, self.rot.z, glm.vec3(0, 0, 1))
-    #     # m_model = glm.rotate(m_model, self.rot.y, glm.vec3(0, 1, 0))
-    #     # m_model = glm.rotate(m_model, self.rot.x, glm.vec3(1, 0, 0))
-    #     # scale
-    #     m_model = glm.scale(m_model, self.scale)
-    #     return m_model
-
-
-
-
 
     def render(self):
         self.update()
@@ -233,7 +176,7 @@ class Cube(ExtendedBaseModel):
         super().__init__(app, vao_name, tex_id, pos, rot, scale)
         
         self.mass = mass
-        
+        self.rot_matrix = self.rot_matrix
         self.inertia_tensor = inertia_tensor
         self.natural_inertia_tensor = inertia_tensor
         self.inverse_inertia_tensor =glm.inverse(self.inertia_tensor)
@@ -245,96 +188,6 @@ class Cube(ExtendedBaseModel):
         self.enable_extract_triangle = enable_extract_triangle
         self.triangles = self._extract_triangles()
         self.id = id
-
-
-
-
-
-    def skew_matrix(self):
-        return glm.mat3(0, -self.angular_velocity.z, self.angular_velocity.y,
-                        self.angular_velocity.z, 0, -self.angular_velocity.x,
-                        -self.angular_velocity.y, self.angular_velocity.x, 0)
-
-
-
-    # def euler_to_mat3(x, y, z):
-    #     Rx = glm.mat3(1, 0, 0,
-    #                 0, cos(x), -sin(x),
-    #                 0, sin(x), cos(x))
-        
-    #     Ry = glm.mat3(cos(y), 0, sin(y),
-    #                 0, 1, 0,
-    #                 -sin(y), 0, cos(y))
-
-    #     Rz = glm.mat3(cos(z), -sin(z), 0,
-    #                 sin(z), cos(z), 0,
-    #                 0, 0, 1)
-        
-    #     return Rz * Ry * Rx
-
-
-
-    # def get_model_matrix(self):
-    #     m_model = glm.mat4()
-    #     # translate
-    #     m_model = glm.translate(m_model, self.pos)
-    #     # rotate
-
-    #     m_model = glm.rotate(m_model, self.rot.z, glm.vec3(0, 0, 1))
-    #     m_model = glm.rotate(m_model, self.rot.y, glm.vec3(0, 1, 0))
-    #     m_model = glm.rotate(m_model, self.rot.x, glm.vec3(1, 0, 0))
-    #     # print(f'this is the rot of {self.} :\n{self.rot}')
-    #     # print(self.rot)
-
-    #     # m_model = glm.rotate(m_model, self.rot.z, glm.vec3(0, 0, 1))
-    #     # m_model = glm.rotate(m_model, self.rot.y, glm.vec3(0, 1, 0))
-    #     # m_model = glm.rotate(m_model, self.rot.x, glm.vec3(1, 0, 0))
-    #     # scale
-    #     m_model = glm.scale(m_model, self.scale)
-    #     return m_model
-
-
-
-
-    def mat3_to_rot_vec(self):
-        R = self.rot_matrix
-        # Calculate rotation angle
-        theta = np.arccos((R[0][0] + R[1][1] + R[2][2] - 1) / 2)
-
-        # If angle is very close to 0 or pi (180 degrees), we need special handling
-        if np.isclose(theta, 0):
-            return glm.vec3(0, 0, 0)
-        elif np.isclose(theta, np.pi):
-            # It's an edge case where multiple rotation vectors are possible
-            # We'll pick one of them
-            x = np.sqrt((R[0][0] + 1) / 2)
-            y = np.sqrt((R[1][1] + 1) / 2)
-            z = np.sqrt((R[2][2] + 1) / 2)
-            return glm.vec3(theta * x, theta * y, theta * z)
-
-        # Calculate rotation axis for general case
-        rx = (R[2][1] - R[1][2]) / (2 * np.sin(theta))
-        ry = (R[0][2] - R[2][0]) / (2 * np.sin(theta))
-        rz = (R[1][0] - R[0][1]) / (2 * np.sin(theta))
-        
-        return glm.vec3(theta * rx, theta * ry, theta * rz)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         
 
 
@@ -373,7 +226,7 @@ class Cube(ExtendedBaseModel):
 
     def update_physics(self, delta_time, impulse=None , torque=None , r_impact =None):
         impulse = glm.vec3(0,0,0) if impulse is None else glm.vec3(impulse) 
-        # effective_torque = glm.vec3(0,0,0) if torque is None else torque
+        effective_torque = glm.vec3(0,0,0) if torque is None else torque
         r_impact = glm.vec3(0,0,0) if r_impact is None else glm.vec3(r_impact)
 
         self.velocity += self.acceleration*delta_time + impulse/self.mass
@@ -381,7 +234,6 @@ class Cube(ExtendedBaseModel):
 
         self.inertia_tensor = self.rot_matrix * self.natural_inertia_tensor * glm.transpose(self.rot_matrix)
         self.inverse_inertia_tensor = glm.inverse(self.inertia_tensor)
-        # to = glm.vec3(glm.cross(r_impact,impulse))
         to = glm.vec3(glm.cross(r_impact,impulse))
         """
         print("\n \n")
@@ -391,17 +243,14 @@ class Cube(ExtendedBaseModel):
         print(f'this is impulse: {impulse}')
         print("\n \n")
 """
-        # self.angular_velocity += self.angular_acceleration*delta_time  + glm.mul(self.inverse_inertia_tensor , to)
-        self.angular_velocity +=  glm.mul(self.inverse_inertia_tensor , glm.vec3(glm.cross(r_impact,impulse)))
+        self.angular_velocity += self.angular_acceleration*delta_time  + glm.mul(self.inverse_inertia_tensor , to)
 
 ##
-        # omega_skew = self.skew_matrix(self.angular_velocity)
-        omega_skew = self.skew_matrix()
+        omega_skew = skew_matrix(self.angular_velocity)
         delta_rot = glm.mat3(1) + omega_skew * delta_time
         # self.rot = delta_rot * self.rot
         self.rot_matrix = delta_rot * self.rot_matrix
         self.rot_matrix = orthonormalize(self.rot_matrix)  # Normalization step
-        # self.rot = self.mat3_to_rot_vec()
 ##
         # self.rot += self.angular_velocity*delta_time
         self.triangles = self._extract_triangles()
@@ -409,7 +258,7 @@ class Cube(ExtendedBaseModel):
 
 
     def update(self):
-        delta_time= 0.016
+        delta_time= 0.0016
         self.update_physics(delta_time)
         super().update()
 
@@ -470,8 +319,6 @@ class Cat(ExtendedBaseModel):
                  pos=(0, 0, 0), rot=(-90, 0, 0), scale=(1, 1, 1)):
         super().__init__(app, vao_name, tex_id, pos, rot, scale)
 
-    
-
 
 class SkyBox(BaseModel):
     def __init__(self, app, vao_name='skybox', tex_id='skybox',
@@ -507,6 +354,22 @@ class AdvancedSkyBox(BaseModel):
         self.texture = self.app.mesh.texture.textures[self.tex_id]
         self.program['u_texture_skybox'] = 0
         self.texture.use(location=0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
